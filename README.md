@@ -12,4 +12,8 @@ Collected data:
 - Pressure
 - Battery level
 
+Circuit diagram:
 ![circuit diagram](/docs/SensorV2Schematic.png?raw=true "Sensor circuit diagram")
+
+Fuse Settings for Atmega328P:
+![fuse settings](/docs/FuseSettings.png?raw=true "Fuse Settings")
