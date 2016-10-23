@@ -32,6 +32,7 @@ extern "C" {
 #define EVENT_BATTERY           4
 
 #define SENSOR_SEND_CYCLES      3600 / 8 // 1 cycle each 8 seconds, send data each hour (3600 seconds)
+//#define SENSOR_SEND_CYCLES      1
 #define BATTERY_SEND_CYCLES     24
 
 /********************************************************************************
@@ -70,8 +71,7 @@ ISR(TIMER1_OVF_vect) {
 }
 
 ISR(TIMER2_OVF_vect) {
-    _NOP()
-    ;
+    _NOP();
 }
 
 /********************************************************************************
@@ -102,8 +102,7 @@ int main(void) {
 
     if (!bme.begin()) {
         printf("Could not find a valid BME280 sensor, check wiring!");
-        while (1)
-            ;
+        while (1);
     }
 
     powerDownAVR();
@@ -128,16 +127,12 @@ void sensorLoop() {
         powerUpAVR();
         sendSensorData();
         powerDownAVR();
-
-        // Wait a little before going to sleep again
-        _delay_ms(10);
     }
 
     _delay_ms(5);
 
     // Sleep mode to save battery, Timer 2 will wake up once each 8 seconds
-    sleep_mode()
-    ;
+    sleep_mode();
 }
 
 void initTimer2() {
@@ -226,6 +221,8 @@ uint16_t adc_read(uint8_t adcx) {
 }
 
 void sendSensorData() {
+    bme.readTemperature(); // we get strange readings after wake up, read to refresh sensor state
+
     int16_t t = (int16_t) (bme.readTemperature() * 100.00f);
     int16_t h = (int16_t) (bme.readHumidity() * 100.00f);
     int16_t p = (int16_t) (bme.readPressure() / 100.0F);
@@ -282,13 +279,18 @@ void sendData(uint8_t event, uint8_t data_high, uint8_t data_low) {
 }
 
 void powerUpAVR() {
+    bme.normalMode();
+    _delay_ms(2000); // wait for BME280 to finish measurements
+
     _on(PC0, PORTC); // enable pull-up resistor for ADC battery level
 
     _out(DDC5, DDRC); // SCL as output
     _out(DDC4, DDRC); // SDA as output
 
     radio.powerUp();
-    bme.normalMode();
+
+    // Wait a little after wake up
+    _delay_ms(10);
 }
 
 void powerDownAVR() {
@@ -299,4 +301,7 @@ void powerDownAVR() {
 
     radio.powerDown();
     bme.sleepMode();
+
+    // Wait a little before going to sleep again
+    _delay_ms(10);
 }

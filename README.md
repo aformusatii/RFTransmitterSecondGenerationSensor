@@ -11,3 +11,5 @@ Collected data:
 - Humidity
 - Pressure
 - Battery level
+
+![circuit diagram](/docs/SensorV2Schematic.png?raw=true "Sensor circuit diagram")
