@@ -18,3 +18,6 @@ Circuit diagram:
 
 Fuse Settings for ATmega328P:
 ![fuse settings](/docs/FuseSettings.png?raw=true "Fuse Settings")
+
+Prototype PCB:
+![prototype pcb](/docs/PrototypePCB.png?raw=true "Prototype PCB")
