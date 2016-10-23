@@ -19,5 +19,8 @@ Circuit diagram:
 Fuse Settings for ATmega328P:
 ![fuse settings](/docs/FuseSettings.png?raw=true "Fuse Settings")
 
+BME/BMP280 breakout board modification to work only with 3.3V:
+![breakout board](/docs/BME280Breakout.png?raw=true "Breakout Board")
+
 Prototype PCB:
 ![prototype pcb](/docs/PrototypePCB.png?raw=true "Prototype PCB")
