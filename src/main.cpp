@@ -32,8 +32,10 @@ extern "C" {
 #define EVENT_BATTERY           4
 
 #define SENSOR_SEND_CYCLES      3600 / 8 // 1 cycle each 8 seconds, send data each hour (3600 seconds)
-//#define SENSOR_SEND_CYCLES      1
+//#define SENSOR_SEND_CYCLES    1
 #define BATTERY_SEND_CYCLES     24
+
+#define VOLATAGE_COEFFICIENT 4.48 // 1.9v -> 425, 2.0v -> 448, 2.5 -> 560, 3.1 -> 668
 
 /********************************************************************************
  Function Prototypes
@@ -227,6 +229,8 @@ void sendSensorData() {
     int16_t h = (int16_t) (bme.readHumidity() * 100.00f);
     int16_t p = (int16_t) (bme.readPressure() / 100.0F);
 
+    // t = t - 173; correction
+
     uint8_t t_low = (uint8_t) t;
     uint8_t t_high = (uint8_t) (t >> 8);
 
@@ -254,8 +258,10 @@ void sendSensorData() {
 
         uint16_t mux0Value = adc_read(MUX0);
 
-        uint8_t b_low = (uint8_t) mux0Value;
-        uint8_t b_high = (uint8_t) (mux0Value >> 8);
+        uint16_t voltage = (uint16_t) ( (( ((uint32_t)mux0Value) * 100) * (VOLATAGE_COEFFICIENT * 100)) / 10000 );
+
+        uint8_t b_low = (uint8_t) voltage;
+        uint8_t b_high = (uint8_t) (voltage >> 8);
 
         // Send battery level via NRF24L01 transceiver
         sendData(EVENT_BATTERY, b_high, b_low);
